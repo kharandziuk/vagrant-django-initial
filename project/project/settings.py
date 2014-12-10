@@ -10,7 +10,14 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+from unipath import Path
+
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+
+PROJECT_DIR = Path(BASE_DIR)
+print "PROJECT_DIR: %s" % PROJECT_DIR
+
+TEMPLATE_DIRS = (PROJECT_DIR.child('templates'),)
 
 
 # Quick-start development settings - unsuitable for production
@@ -26,6 +33,8 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
+BROKER_URL = 'django://'
+
 
 # Application definition
 
@@ -38,6 +47,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     #third party
     'djcelery',
+    'kombu.transport.django',
 )
 
 MIDDLEWARE_CLASSES = (
