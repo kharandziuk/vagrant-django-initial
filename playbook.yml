@@ -1,0 +1,40 @@
+# -*- mode: yaml-*-
+# vi: set ft=yaml sw=2 ts=2 :
+
+- name: Configure development machine
+  hosts: all
+  sudo: True
+  tasks:
+    - name: set locale
+      lineinfile: dest=/etc/default/locale line="LC_ALL=C"
+
+    - name: install curl
+      apt: name={{ item }} update_cache=yes
+      with_items:
+        - git
+        - curl
+        - postgresql 
+        - postgresql-contrib
+        - libpq-dev
+        - python-dev
+        - python-psycopg2
+
+    - name: install pip
+      shell: curl https://bootstrap.pypa.io/get-pip.py | python -
+
+    - pip: name=virtualenv
+
+    - pip: requirements=/project/requirements.pip virtualenv=/ENV
+
+    - name: create new role 
+      sudo_user: postgres
+      postgresql_user: name=djcelery password=djcelery
+
+    - name: create new db
+      sudo_user: postgres
+      postgresql_db: name=djcelery
+                     encoding='UTF-8'
+                     lc_collate='en_US.utf-8'
+                     lc_ctype='en_US.utf-8'
+                     template='template0'
+                     owner=djcelery
